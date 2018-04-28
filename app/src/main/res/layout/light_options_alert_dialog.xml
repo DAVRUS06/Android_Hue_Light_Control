@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:columnCount="2">
+
+            <TextView
+                android:id="@+id/textViewLightOptionsName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|fill_horizontal|end"
+                android:text="@string/light_name"
+                android:textAlignment="textEnd"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+            <EditText
+                android:id="@+id/editTextLightOptionsName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="fill"
+                android:ems="10"
+                android:hint="@string/enter_name"
+                android:inputType="text"
+                android:maxLength="32" />
+
+            <Button
+                android:id="@+id/buttonLightOptionsIdentify"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="2"
+                android:layout_gravity="fill"
+                android:text="@string/identify" />
+
+            <ImageView
+                android:id="@+id/imageViewLightOptionsColor"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_columnSpan="2"
+                android:layout_gravity="fill" />
+
+            <TextView
+                android:id="@+id/textViewLightOptionsRed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|fill_horizontal|end"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:text="@string/red"
+                android:textAlignment="textEnd"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+            <SeekBar
+                android:id="@+id/seekBarLightOptionsRed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="fill"
+                android:max="255"
+                android:minHeight="30dp"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp" />
+
+            <TextView
+                android:id="@+id/textViewLightOptionsGreen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|fill_horizontal|end"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:text="@string/green"
+                android:textAlignment="textEnd"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+            <SeekBar
+                android:id="@+id/seekBarLightOptionsGreen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="fill"
+                android:max="255"
+                android:minHeight="30dp"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp" />
+
+            <TextView
+                android:id="@+id/textViewLightOptionsBlue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|fill_horizontal|end"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:text="@string/blue"
+                android:textAlignment="textEnd"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+            <SeekBar
+                android:id="@+id/seekBarLightOptionsBlue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="fill"
+                android:max="255"
+                android:minHeight="30dp"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp" />
+
+            <TextView
+                android:id="@+id/textViewLightOptionsSaturation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|fill_horizontal|end"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:text="@string/saturation"
+                android:textAlignment="textEnd"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+            <SeekBar
+                android:id="@+id/seekBarLightOptionsSaturation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="fill"
+                android:max="254"
+                android:min="0"
+                android:minHeight="30dp"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp" />
+
+            <TextView
+                android:id="@+id/textViewLightOptionsBrightness"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|fill_horizontal|end"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:text="@string/brightness"
+                android:textAlignment="textEnd"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+            <SeekBar
+                android:id="@+id/seekBarLightOptionsBrightness"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="fill"
+                android:max="254"
+                android:min="1"
+                android:minHeight="30dp"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp" />
+
+            <TextView
+                android:id="@+id/textViewLightOptionsColorLoop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|fill_horizontal|end"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:text="@string/color_loop"
+                android:textAlignment="textEnd"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+            <ToggleButton
+                android:id="@+id/toggleButtonLightOptionsColorLoop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="fill"
+                android:text="ToggleButton" />
+
+            <TextView
+                android:id="@+id/textViewLightOptionsOnOff"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|fill_horizontal|end"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:text="@string/on_off"
+                android:textAlignment="textEnd"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+            <ToggleButton
+                android:id="@+id/toggleButtonLightOptionsOnOff"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="fill"
+                android:text="ToggleButton" />
+
+        </GridLayout>
+
+    </LinearLayout>
+
+
+</ScrollView>

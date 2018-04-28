@@ -1,0 +1,70 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.user.finalhcproject.GroupsFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerViewGroups"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatButtonGroupsAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/floatButtonGroupsRefresh"
+        android:layout_alignLeft="@+id/floatButtonGroupsRefresh"
+        android:layout_alignStart="@+id/floatButtonGroupsRefresh"
+        android:layout_marginBottom="10dp"
+        android:clickable="true"
+        android:elevation="8dp"
+        android:focusable="true"
+        android:scaleType="center"
+        android:src="@drawable/ic_action_add_circle_white"
+        android:tint="@android:color/holo_green_light"
+        app:backgroundTint="@color/floatingButton"
+        tools:targetApi="lollipop" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatButtonGroupsRemove"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/floatButtonGroupsAdd"
+        android:layout_alignLeft="@+id/floatButtonGroupsAdd"
+        android:layout_alignStart="@+id/floatButtonGroupsAdd"
+        android:layout_marginBottom="10dp"
+        android:clickable="true"
+        android:elevation="8dp"
+        android:focusable="true"
+        android:scaleType="center"
+        android:src="@drawable/ic_action_remove_light"
+        android:tint="@android:color/holo_red_dark"
+        app:backgroundTint="@color/floatingButton"
+        tools:targetApi="lollipop" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatButtonGroupsRefresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="20dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginRight="15dp"
+        android:clickable="true"
+        android:elevation="8dp"
+        android:focusable="true"
+        android:scaleType="center"
+        android:src="@drawable/ic_action_refresh_white"
+        android:tint="@android:color/holo_green_light"
+        app:backgroundTint="@color/floatingButton"
+        tools:targetApi="lollipop" />
+
+</RelativeLayout>

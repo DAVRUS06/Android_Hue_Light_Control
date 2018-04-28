@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">finalHCproject</string>
+    <string name="groups">Groups</string>
+    <string name="lights">Lights</string>
+    <string name="bridges">Bridges</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="connect">Connect</string>
+    <string name="connected">Connected:\u0020</string>
+    <string name="bridge_name">Bridge Name:\u0020</string>
+    <string name="light_name">Light Name:\u0020</string>
+    <string name="identify">Identify</string>
+    <string name="enter_name">Enter Name</string>
+    <string name="identify_light">Identify:\u0020</string>
+    <string name="red">Red:\u0020</string>
+    <string name="green">Green:\u0020</string>
+    <string name="blue">Blue:\u0020</string>
+    <string name="brightness">Brightness:\u0020</string>
+    <string name="on_off">On / Off :\u0020</string>
+    <string name="saturation">Saturation:\u0020</string>
+    <string name="color_loop">Color Loop:\u0020</string>
+    <string name="group_names">Group Name:</string>
+    <string name="group_item_name">Group Name:\u0020</string>
+    <string name="g_name">Group Name</string>
+</resources>
