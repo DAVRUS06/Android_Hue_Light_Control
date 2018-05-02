@@ -158,7 +158,8 @@ public class LightsFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        findLights();
+        if(bridge != null)
+            findLights();
         act = (MainActivity)getActivity();
 
     }
