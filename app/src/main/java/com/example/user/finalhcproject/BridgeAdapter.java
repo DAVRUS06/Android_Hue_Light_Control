@@ -1,5 +1,9 @@
 package com.example.user.finalhcproject;
 
+// The BridgeAdapter class is used to setup the bridge fragment. Binds the layout widgets and sets
+//  the values for the widgets. In this case it shows the available Hue bridges on the network and the name
+//  of the bridge.
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -38,6 +42,8 @@ public class BridgeAdapter extends RecyclerView.Adapter<BridgeAdapter.ViewHolder
         return new ViewHolder(v);
     }
 
+    // Adding bridges to the view.
+    // Name of bridge and correct picture is selected to be shown.
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
@@ -68,11 +74,13 @@ public class BridgeAdapter extends RecyclerView.Adapter<BridgeAdapter.ViewHolder
         });
     }
 
+    // Return the number of bridges that were discovered
     @Override
     public int getItemCount() {
         return bridgeItems.size();
     }
 
+    // Gets the layout elements from the view so they can have values assigned to them
     public class ViewHolder extends RecyclerView.ViewHolder{
 
         public TextView textViewBridgeName;

@@ -1,5 +1,9 @@
 package com.example.user.finalhcproject;
 
+// The bridge fragment class is how the user interacts with setting up a bridge to be used with the app.
+//      This shows the bridges that are available on the network and the user can tap to connect to one.
+
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
@@ -20,6 +24,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.philips.lighting.hue.sdk.wrapper.connection.*;
+import com.philips.lighting.hue.sdk.wrapper.connection.ConnectionEvent;
+import com.philips.lighting.hue.sdk.wrapper.discovery.BridgeDiscovery;
+import com.philips.lighting.hue.sdk.wrapper.discovery.BridgeDiscoveryCallback;
+import com.philips.lighting.hue.sdk.wrapper.discovery.BridgeDiscoveryResult;
+import com.philips.lighting.hue.sdk.wrapper.domain.HueError;
+import com.philips.lighting.hue.sdk.wrapper.domain.ReturnCode;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,6 +65,9 @@ public class bridgesFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    // Used for contacting main activity
+    MainActivity act;
 
     public bridgesFragment() {
         // Required empty public constructor
@@ -93,13 +107,22 @@ public class bridgesFragment extends Fragment {
         recyclerViewBridge.setHasFixedSize(true);
         recyclerViewBridge.setLayoutManager(new LinearLayoutManager(getActivity()));
         bridgeList = new ArrayList<>();
+        act = (MainActivity)getActivity();
 
         refreshFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bridgeList.clear();
-                bridgeDiscoveryAdapter.notifyDataSetChanged();
-                findBridges();
+                if(bridgeDiscoveryAdapter != null)
+                    bridgeDiscoveryAdapter.notifyDataSetChanged();
+
+
+                /**
+                 * Use findBridges() if using the android studio emulator
+                 * Use hueBridgeDiscovery() for deploying to devices
+                 */
+                //findBridges();
+                hueBridgeDiscovery();
             }
         });
 
@@ -109,8 +132,12 @@ public class bridgesFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        findBridges();
-
+        /**
+         * Use findBridges() if using the android studio emulator
+         * Use hueBridgeDiscovery() for deploying to devices
+         */
+        //findBridges();
+        hueBridgeDiscovery();
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -152,13 +179,14 @@ public class bridgesFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    // Method to find the bridges connected to the network
+    // Method to find the bridges connected to the network. This uses the nupnp method of detecting a bridge
+    // Doesn't work for all networks.
     private void findBridges() {
         final ProgressDialog progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("Searching for bridges...");
         progressDialog.show();
 
-        // Create new HTTP request
+        // Create new HTTP request to find bridges
         StringRequest request = new StringRequest(Request.Method.GET,
                 findBridgeURL,
                 new Response.Listener<String>() {
@@ -208,6 +236,7 @@ public class bridgesFragment extends Fragment {
         queue.add(request);
     }
 
+    // Method to get the name of a Hue bridge on the network.
     private void getBridgeName(final int position) {
 
         ListItemBridge currentItem = bridgeList.get(position);
@@ -245,6 +274,63 @@ public class bridgesFragment extends Fragment {
 
         RequestQueue queue = Volley.newRequestQueue(getActivity());
         queue.add(request);
+    }
+
+
+    // More reliable way of detecting bridges on the network using the SDK provided tools.
+    // NOTE: Causes a crash when using the Android Studio Emulator. Use findbridges() instead with emulator.
+    public void hueBridgeDiscovery() {
+        if(bridgeList != null)
+            if(!bridgeList.isEmpty())
+                bridgeList.clear();
+        if(bridgeDiscoveryAdapter != null)
+            bridgeDiscoveryAdapter.notifyDataSetChanged();
+        final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setMessage("Searching for bridges...");
+        progressDialog.show();
+
+        BridgeDiscovery bridgeDiscovery = new BridgeDiscovery();
+        bridgeDiscovery.search(BridgeDiscovery.BridgeDiscoveryOption.UPNP_AND_NUPNP, new BridgeDiscoveryCallback() {
+            @Override
+            public void onFinished(List<BridgeDiscoveryResult> list, ReturnCode returnCode) {
+                if(returnCode.equals(ReturnCode.SUCCESS)) {
+
+                    // Process results of the search
+                    for(int i = 0; i < list.size(); i++) {
+                        BridgeDiscoveryResult result = list.get(i);
+                        ListItemBridge newItem = new ListItemBridge(
+                                "Getting Name...",
+                                result.getUniqueID(),
+                                result.getIP(),
+                                "BSB002"
+                        );
+                        bridgeList.add(newItem);
+                    }
+
+
+                    // Get the names of the bridges found
+                    for(int i = 0; i < bridgeList.size(); i++)
+                    {
+                        getBridgeName(i);
+                    }
+
+                    act.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            bridgeDiscoveryAdapter = new BridgeAdapter(bridgeList, getActivity());
+                            recyclerViewBridge.setAdapter(bridgeDiscoveryAdapter);
+                        }
+                    });
+                    progressDialog.dismiss();
+
+                }
+                else {
+                    // Notify no bridges were found
+                    act.showToast("Could not find any Hue bridges.");
+                    progressDialog.dismiss();
+                }
+            }
+        });
     }
 
 }

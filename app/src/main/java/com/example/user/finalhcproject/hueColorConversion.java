@@ -1,10 +1,13 @@
 package com.example.user.finalhcproject;
 
 
+
 import com.philips.lighting.hue.sdk.wrapper.domain.device.light.LightPoint;
 import com.philips.lighting.hue.sdk.wrapper.domain.device.light.LightState;
 import com.philips.lighting.hue.sdk.wrapper.utilities.HueColor;
 
+// This is a method to convert the color values that the Hue system uses to RGB values that can easily be used
+// in this application and more user friendly.
 public class hueColorConversion {
 
     // XY to RGB conversion provided by Phillips Hue SDK Guide
@@ -57,7 +60,7 @@ public class hueColorConversion {
             b = (1.0f + 0.055f) * (float)Math.pow(b, (1.0f / 2.4f)) - 0.055f;
 
         if (r > b && r > g) {
-            // red is biggest
+            // red is largest
             if (r > 1.0f) {
                 g = g / r;
                 b = b / r;
@@ -65,7 +68,7 @@ public class hueColorConversion {
             }
         }
         else if (g > b && g > r) {
-            // green is biggest
+            // green is largest
             if (g > 1.0f) {
                 r = r / g;
                 b = b / g;
@@ -73,7 +76,7 @@ public class hueColorConversion {
             }
         }
         else if (b > r && b > g) {
-            // blue is biggest
+            // blue is largest
             if (b > 1.0f) {
                 r = r / b;
                 g = g / b;
@@ -88,6 +91,7 @@ public class hueColorConversion {
         return  rgbValues;
     }
 
+    // Method to get the light color values then convert them to RGB and return to caller
     public HueColor.RGB getRGBFromLight(LightPoint light) {
         LightState lightState = light.getLightState();
         HueColor hueColor = lightState.getColor();

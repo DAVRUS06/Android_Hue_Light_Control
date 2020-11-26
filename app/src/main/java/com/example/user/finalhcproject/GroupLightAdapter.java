@@ -1,5 +1,9 @@
 package com.example.user.finalhcproject;
 
+// The group light adapter is used when the user selects a group in the group tab and the lights
+//      for that certain group need to be displayed. All layout widgets are populated and the values
+//      set to the properties of the lights.
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -43,6 +47,7 @@ public class GroupLightAdapter extends RecyclerView.Adapter<GroupLightAdapter.Vi
         return new ViewHolder(v);
     }
 
+    // This method sets the values of the view elements to the information that belongs to the lights.
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         final LightPoint light = lightItems.get(position);
@@ -70,6 +75,7 @@ public class GroupLightAdapter extends RecyclerView.Adapter<GroupLightAdapter.Vi
         });
     }
 
+    // Return the amount of lights in the group.
     @Override
     public int getItemCount() {
         return lightItems.size();

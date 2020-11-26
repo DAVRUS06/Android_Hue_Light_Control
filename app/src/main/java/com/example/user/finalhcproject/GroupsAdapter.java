@@ -1,5 +1,8 @@
 package com.example.user.finalhcproject;
 
+// The group adapter is used to setup the group fragment. This binds the widgets in the layout and sets the values
+//
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -39,6 +42,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ViewHolder
         return new ViewHolder(v);
     }
 
+    // Fill in the group names and show a toast message.
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
@@ -54,11 +58,13 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ViewHolder
         });
     }
 
+    // Return the amount of groups detected in the system
     @Override
     public int getItemCount() {
         return groupItems.size();
     }
 
+    // This gets the layout elements from the view so they can be modified later.
     public class ViewHolder extends RecyclerView.ViewHolder{
 
         public TextView textViewGroupName;

@@ -1,5 +1,7 @@
 package com.example.user.finalhcproject;
 
+// The group fragment is the tab where the user can interact with the groups in the light system.
+//      This allows the user to select an existing group for editing. Creating groups or removing groups.
 
 import android.support.v7.app.AlertDialog;
 import android.content.Context;
@@ -29,6 +31,7 @@ import com.philips.lighting.hue.sdk.wrapper.domain.BridgeState;
 import com.philips.lighting.hue.sdk.wrapper.domain.ClipAttribute;
 import com.philips.lighting.hue.sdk.wrapper.domain.DomainType;
 import com.philips.lighting.hue.sdk.wrapper.domain.clip.Alert;
+import com.philips.lighting.hue.sdk.wrapper.domain.clip.Effect;
 import com.philips.lighting.hue.sdk.wrapper.domain.device.light.LightConfiguration;
 import com.philips.lighting.hue.sdk.wrapper.domain.device.light.LightPoint;
 import com.philips.lighting.hue.sdk.wrapper.domain.device.light.LightState;
@@ -90,12 +93,19 @@ public class GroupsFragment extends Fragment {
     private ToggleButton toggleButtonLightOnOff;
     private ImageView imageViewCurrentColor;
 
-    // Varibles for colors
+    // Variables for colors
     private int Red = 255;
     private int Green = 255;
     private int Blue = 255;
 
     private Group groupCache;
+
+    // Booleans for seekbars
+    private boolean redChanged = false;
+    private boolean greenChanged = false;
+    private boolean blueChanged = false;
+    private boolean saturationChanged = false;
+    private boolean brightnessChanged = false;
 
 
 
@@ -234,6 +244,7 @@ public class GroupsFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
+    // Method used to find all the groups that the bridge has saved.
     public void findGroups() {
         // Get most up to date copy of bridge
         updateGroupBridge();
@@ -255,6 +266,7 @@ public class GroupsFragment extends Fragment {
         }
     }
 
+    // The Hue bridge caches information and this gets the most up to date information from the bridge.
     public void updateGroupBridge() {
         if(act != null) {
             bridge = act.getBridge();
@@ -264,12 +276,14 @@ public class GroupsFragment extends Fragment {
     // Used to make sure the list contents is as up to date as possible
     private void refreshList() {
         groupList.clear();
-        groupDiscoveryAdapter.notifyDataSetChanged();
+        if(groupDiscoveryAdapter != null)
+            groupDiscoveryAdapter.notifyDataSetChanged();
         act.HeartBeatPulse();
         updateGroupBridge();
         findGroups();
     }
 
+    // Delay to prevent some unwanted behaviours at startup
     private void delayStart(int delaytime) {
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -288,9 +302,10 @@ public class GroupsFragment extends Fragment {
         }, delaytime);
     }
 
+    // Show the lights that belong in the group that was selected.
     public void showGroupLightsDialog(final Group group) {
         groupCache = group;
-        // Bring up and alert dialog using the light list xml
+        // Bring up an alert dialog using the light list xml
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.NewDialogTheme);
 
         View groupLightsView = LayoutInflater.from(getActivity()).inflate(R.layout.groups_lights_dialog, null);
@@ -337,6 +352,7 @@ public class GroupsFragment extends Fragment {
     }
 
 
+    // Method to show the dialog box for removing a light(s) from a group.
     private void showRemoveLightDialog(final Group group) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.NewDialogTheme);
 
@@ -387,6 +403,7 @@ public class GroupsFragment extends Fragment {
     }
 
 
+    // Method to show the dialog box for adding a light(s) to a group.
     private void showAddLightDialog(final Group group) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.NewDialogTheme);
 
@@ -469,6 +486,7 @@ public class GroupsFragment extends Fragment {
         dialog.show();
     }
 
+    // Method to show the dialog box for adding a new group to the Hue system.
     private void showAddGroupDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.NewDialogTheme);
 
@@ -540,6 +558,7 @@ public class GroupsFragment extends Fragment {
         dialog.show();
     }
 
+    // Method to show the dialog box for removing an existing group for the system.
     private void showRemoveGroupDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.NewDialogTheme);
 
@@ -568,6 +587,7 @@ public class GroupsFragment extends Fragment {
                     }
                 }
                 delayRefresh(500);
+                groupCache = null;
             }
         });
 
@@ -586,17 +606,21 @@ public class GroupsFragment extends Fragment {
         dialog.show();
     }
 
+    // Method to refresh the light list, the heartbeat is a cache update that happens periodically
+    // This method makes sure that any new lights are included in the list.
+    public void updateLightsFromHearbeat() {
+        refreshLightList();
+    }
 
+    // Method to get the lights that belong to a certain group in the system.
     private void getLightsByGroup() {
-        lightIds = groupCache.getLightIds();
-
         // Get the IDs of the lights in the group
         lightIds = groupCache.getLightIds();
 
         // Initialize groupLights list
         groupLights = new ArrayList<>();
 
-        // Get the lights from the IDs that were griven by the group
+        // Get the lights from the IDs that were given by the group
         for(int i = 0; i < lightIds.size(); i++) {
             LightPoint light = (LightPoint)bridge.getBridgeState().getDevice(DomainType.LIGHT_POINT, lightIds.get(i));
             if(i == 0)
@@ -606,10 +630,13 @@ public class GroupsFragment extends Fragment {
         // Pass this list to the groupLightAdapter
         groupLightDiscoveryAdapter = new GroupLightAdapter(groupLights, getActivity());
         recyclerViewGroupLights.setAdapter(groupLightDiscoveryAdapter);
+
+        act.setGroupInit(true);
     }
 
 
 
+    // Method to update the state of a light that has been selected.
     public void updateLightState(final LightPoint light, final boolean allLights) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.NewDialogTheme);
 
@@ -632,6 +659,8 @@ public class GroupsFragment extends Fragment {
         HueColor.RGB currentRGB = currentColor.getRGB();
         HueColor.XY currentXY = currentColor.getXY();
         hueColorConversion converter = new hueColorConversion();
+
+        // Convert the XY values to RGB values that can be put on the seeker bars
         currentRGB = converter.convertXYtoRGB(currentXY.x,currentXY.y, currentRGB, currentColor.getBrightness());
         Red = currentRGB.r;
         Green = currentRGB.g;
@@ -641,12 +670,30 @@ public class GroupsFragment extends Fragment {
         // Get the name of the light
         editTextLightName.setText(light.getName());
 
-        // Get the color information from the light
-        seekBarRed.setProgress(currentRGB.r);
-        seekBarGreen.setProgress(currentRGB.g);
-        seekBarBlue.setProgress(currentRGB.b);
-        seekBarSaturation.setProgress(currentState.getSaturation());
-        seekBarBrightness.setProgress(currentState.getBrightness());
+        // Get the color information from the light or set all to 255
+        if(!allLights) {
+            // Get the colors from the currentLight
+            seekBarRed.setProgress(currentRGB.r);
+            seekBarGreen.setProgress(currentRGB.g);
+            seekBarBlue.setProgress(currentRGB.b);
+            seekBarSaturation.setProgress(currentState.getSaturation());
+            seekBarBrightness.setProgress(currentState.getBrightness());
+            // Set the color of the imageView to the current color of the light.
+            imageViewCurrentColor.setBackgroundColor(Color.argb(255, currentRGB.r, currentRGB.g, currentRGB.b));
+        }
+        else {
+            // Set them all to 255 (WHITE)
+            seekBarRed.setProgress(255);
+            seekBarGreen.setProgress(255);
+            seekBarBlue.setProgress(255);
+            seekBarSaturation.setProgress(128);
+            seekBarBrightness.setProgress(255);
+            // Set the color of the imageView to the current color of the light.
+            imageViewCurrentColor.setBackgroundColor(Color.argb(255, 255, 255, 255));
+            Red = 255;
+            Green = 255;
+            Blue = 255;
+        }
 
         // Setup the Seekbar listener
         seekBarRed.setOnSeekBarChangeListener(SeekListener);
@@ -654,6 +701,12 @@ public class GroupsFragment extends Fragment {
         seekBarBlue.setOnSeekBarChangeListener(SeekListener);
         seekBarSaturation.setOnSeekBarChangeListener(SeekListener);
         seekBarBrightness.setOnSeekBarChangeListener(SeekListener);
+        // Reset the flags for the seekbars
+        redChanged = false;
+        greenChanged = false;
+        blueChanged = false;
+        saturationChanged = false;
+        brightnessChanged = false;
 
         // Listener for the identify button
         buttonIdentify.setOnClickListener(new View.OnClickListener() {
@@ -669,7 +722,7 @@ public class GroupsFragment extends Fragment {
 
         // Get the effect of the light
         com.philips.lighting.hue.sdk.wrapper.domain.clip.Effect lightEffect = currentState.getEffect();
-        if(lightEffect.toString() == "NONE")
+        if(lightEffect.equals(Effect.NONE))
             toggleButtonColorLoop.setChecked(false);
         else
             toggleButtonColorLoop.setChecked(true);
@@ -679,35 +732,59 @@ public class GroupsFragment extends Fragment {
         toggleButtonLightOnOff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LightState newState = new LightState();
-                newState.setHue(currentState.getHue());
-                newState.setBrightness(currentState.getBrightness());
                 if(toggleButtonLightOnOff.isChecked())
-                    newState.setOn(true);
-                else
-                    newState.setOn(false);
+                    currentState.setOn(true);
+                else {
+                    currentState.setOn(false);
+                    toggleButtonColorLoop.setChecked(false);
+                    currentState.setEffect(com.philips.lighting.hue.sdk.wrapper.domain.clip.Effect.NONE);
+                }
                 if(allLights) {
-                    /*for(int i = 1; i < lightList.size(); i++) {
-                        LightState listLightState = lightList.get(i).getLightState();
-                        LightState newListItemState = new LightState();
-                        newListItemState.setBrightness(listLightState.getBrightness());
-                        newListItemState.setHue(listLightState.getHue());
+                    for(int i = 1; i < groupLights.size(); i++) {
+                        LightState listLightState = groupLights.get(i).getLightState();
                         if(toggleButtonLightOnOff.isChecked())
-                            newListItemState.setOn(true);
-                        else
-                            newListItemState.setOn(false);
-                        lightList.get(i).updateState(newListItemState);
-                    }*/
-
-                    com.philips.lighting.hue.sdk.wrapper.domain.resource.Group group = bridge.getBridgeState().getGroup("0");
-                    group.apply(newState);
-
+                            listLightState.setOn(true);
+                        else {
+                            listLightState.setOn(false);
+                            listLightState.setEffect(com.philips.lighting.hue.sdk.wrapper.domain.clip.Effect.NONE);
+                        }
+                        groupLights.get(i).updateState(listLightState, true);
+                    }
                 }
                 else {
-                    light.updateState(newState);
+                    light.updateState(currentState, true);
                 }
             }
         });
+
+        // Color Loop toggle listener
+        toggleButtonColorLoop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!allLights) {
+                    // Do for single light
+                    if(toggleButtonColorLoop.isChecked())
+                        currentState.setEffect(com.philips.lighting.hue.sdk.wrapper.domain.clip.Effect.COLORLOOP);
+                    else
+                        currentState.setEffect(com.philips.lighting.hue.sdk.wrapper.domain.clip.Effect.NONE);
+                    light.updateState(currentState, true);
+                }
+                else
+                {
+                    // Do for all lights
+                    for(int i = 1; i < groupLights.size(); i++) {
+                        LightState listLightState = groupLights.get(i).getLightState();
+                        if(toggleButtonColorLoop.isChecked())
+                            listLightState.setEffect(com.philips.lighting.hue.sdk.wrapper.domain.clip.Effect.COLORLOOP);
+                        else
+                            listLightState.setEffect(com.philips.lighting.hue.sdk.wrapper.domain.clip.Effect.NONE);
+                        groupLights.get(i).updateState(listLightState, true);
+                    }
+                }
+
+            }
+        });
+
 
         builder.setPositiveButton("Apply", new DialogInterface.OnClickListener() {
             @Override
@@ -719,34 +796,23 @@ public class GroupsFragment extends Fragment {
 
                 if(allLights) {
                     // Change all lights
+                    Red = seekBarRed.getProgress();
+                    Green = seekBarGreen.getProgress();
+                    Blue = seekBarBlue.getProgress();
 
+                    LightState newMasterState = new LightState();
                     // Create a new hue color based on the RGB values
                     newUserColor = new HueColor(
                             new HueColor.RGB(Red, Green, Blue),
                             newUserconfig.getModelIdentifier(),
                             newUserconfig.getSwVersion()
                     );
-                    newUserState.setXY(newUserColor.getXY().x, newUserColor.getXY().y);
+                    newMasterState.setXY(newUserColor.getXY().x, newUserColor.getXY().y);
 
                     // Get and set the brightness and saturation
-                    newUserState.setBrightness(seekBarBrightness.getProgress());
-                    newUserState.setSaturation(seekBarSaturation.getProgress());
-
-                    // See if the user wants colorLoop activated
-                    if (toggleButtonColorLoop.isChecked())
-                        newUserState.setEffect(com.philips.lighting.hue.sdk.wrapper.domain.clip.Effect.COLORLOOP);
-                    else
-                        newUserState.setEffect(com.philips.lighting.hue.sdk.wrapper.domain.clip.Effect.NONE);
-
-                    newUserState.setOn(toggleButtonLightOnOff.isChecked());
-
-                    // Finally update the state and configuration to the light.
-                    //for(int i = 0; i < lightList.size(); i++) {
-                    //    lightList.get(i).updateState(newUserState);
-                    //}
-
-                    com.philips.lighting.hue.sdk.wrapper.domain.resource.Group group = bridge.getBridgeState().getGroup("0");
-                    group.apply(newUserState);
+                    newMasterState.setBrightness(seekBarBrightness.getProgress());
+                    newMasterState.setSaturation(seekBarSaturation.getProgress());
+                    groupCache.apply(newMasterState);
 
                 }
                 else {
@@ -755,31 +821,28 @@ public class GroupsFragment extends Fragment {
                         // User deleted name and didn't input another, don't take it as input
                     } else {
                         newUserconfig.setName(editTextLightName.getText().toString());
-                        light.updateConfiguration(newUserconfig);
+                        light.updateConfiguration(newUserconfig, true);
                     }
 
-                    // Create a new hue color based on the RGB values
-                    newUserColor = new HueColor(
-                            new HueColor.RGB(Red, Green, Blue),
-                            newUserconfig.getModelIdentifier(),
-                            newUserconfig.getSwVersion()
-                    );
-                    newUserState.setXY(newUserColor.getXY().x, newUserColor.getXY().y);
+                    // Only set the colors if they were changed.
+                    if(redChanged || greenChanged || blueChanged) {
+                        // Create a new hue color based on the RGB values
+                        newUserColor = new HueColor(
+                                new HueColor.RGB(Red, Green, Blue),
+                                newUserconfig.getModelIdentifier(),
+                                newUserconfig.getSwVersion()
+                        );
+                        currentState.setXY(newUserColor.getXY().x, newUserColor.getXY().y);
+                    }
 
                     // Get and set the brightness and saturation
-                    newUserState.setBrightness(seekBarBrightness.getProgress());
-                    newUserState.setSaturation(seekBarSaturation.getProgress());
-
-                    // See if the user wants colorLoop activated
-                    if (toggleButtonColorLoop.isChecked())
-                        newUserState.setEffect(com.philips.lighting.hue.sdk.wrapper.domain.clip.Effect.COLORLOOP);
-                    else
-                        newUserState.setEffect(com.philips.lighting.hue.sdk.wrapper.domain.clip.Effect.NONE);
-
-                    newUserState.setOn(toggleButtonLightOnOff.isChecked());
+                    if(brightnessChanged)
+                        currentState.setBrightness(seekBarBrightness.getProgress());
+                    if(saturationChanged)
+                        currentState.setSaturation(seekBarSaturation.getProgress());
 
                     // Finally update the state and configuration to the light.
-                    light.updateState(newUserState);
+                    light.updateState(currentState, true);
                 }
                 refreshLightList();
             }
@@ -795,18 +858,24 @@ public class GroupsFragment extends Fragment {
         builder.setView(lightOptionView);
         AppCompatDialog dialog = builder.create();
         dialog.setCanceledOnTouchOutside(false);
+        dialog.getWindow().setBackgroundDrawableResource(R.drawable.alert_dialog_custom);
         dialog.show();
     }
 
+    // Refreshes the light list.
     private void refreshLightList() {
         groupLights.clear();
-        groupLightDiscoveryAdapter.notifyDataSetChanged();
+        if(groupLightDiscoveryAdapter != null)
+            groupLightDiscoveryAdapter.notifyDataSetChanged();
         act.HeartBeatPulse();
         updateGroupBridge();
-        getLightsByGroup();
-        groupLightDiscoveryAdapter.notifyDataSetChanged();
+        if(groupCache != null && bridge.isConnected())
+            groupCache = bridge.getBridgeState().getGroup(groupCache.getIdentifier());
+        if(groupCache != null)
+            getLightsByGroup();
     }
 
+    // Method used to update the color of the image to represent the color being set by the seeker bars.
     private final SeekBar.OnSeekBarChangeListener SeekListener = new SeekBar.OnSeekBarChangeListener() {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -815,18 +884,27 @@ public class GroupsFragment extends Fragment {
             switch (seekBar.getId()) {
                 case R.id.seekBarLightOptionsRed:
                     Red = progress;
+                    redChanged = true;
                     act.showToast("Red: " + Integer.toString(progress));
                     imageViewCurrentColor.setBackgroundColor(Color.argb(255, Red, Green, Blue));
                     break;
                 case R.id.seekBarLightOptionsGreen:
                     Green = progress;
+                    greenChanged = true;
                     act.showToast("Green: " + Integer.toString(progress));
                     imageViewCurrentColor.setBackgroundColor(Color.argb(255, Red, Green, Blue));
                     break;
                 case R.id.seekBarLightOptionsBlue:
                     Blue = progress;
+                    blueChanged = true;
                     act.showToast("Blue: " + Integer.toString(progress));
                     imageViewCurrentColor.setBackgroundColor(Color.argb(255, Red, Green, Blue));
+                    break;
+                case R.id.seekBarLightOptionsSaturation:
+                    saturationChanged = true;
+                    break;
+                case R.id.seekBarLightOptionsBrightness:
+                    brightnessChanged = true;
                     break;
             }
         }

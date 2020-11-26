@@ -1,5 +1,9 @@
 package com.example.user.finalhcproject;
 
+// The light adapter class is used for the light fragment. This populates the widgets on the layout and fills the values.
+//
+
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -43,6 +47,7 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.ViewHolder>{
         return new ViewHolder(v);
     }
 
+    // Set the name, picture and color of each light in the system in the view elements
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         final LightPoint light = lightItems.get(position);
@@ -69,11 +74,13 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.ViewHolder>{
         });
     }
 
+    // Returns the amount of lights in the system.
     @Override
     public int getItemCount() {
         return lightItems.size();
     }
 
+    // Sets the view elements so they can be modified later.
     public class ViewHolder extends RecyclerView.ViewHolder{
 
         public TextView textViewLightName;

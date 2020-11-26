@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.Toast;
 
+import com.philips.lighting.hue.sdk.wrapper.HueLog;
 import com.philips.lighting.hue.sdk.wrapper.Persistence;
 import com.philips.lighting.hue.sdk.wrapper.connection.BridgeConnection;
 import com.philips.lighting.hue.sdk.wrapper.connection.BridgeConnectionCallback;
@@ -77,10 +78,14 @@ public class MainActivity extends AppCompatActivity implements bridgesFragment.O
     // Error Toast
     private Toast errorToast;
 
-
+    private boolean groupsInit = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        HueLog.setConsoleLogLevel(HueLog.LogLevel.DEBUG);
+        //HueLog.setConsoleLogLevel(HueLog.LogLevel.DEBUG, HueLog.LogComponent.NETWORK);
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = MainActivity.this.getApplicationContext();
@@ -211,6 +216,7 @@ public class MainActivity extends AppCompatActivity implements bridgesFragment.O
     }
 
     // This will get the last bridge that was connected if it exist.
+    // This information is stored locally on the device
     private String getLastBridgeIp() {
         List<KnownBridge> bridges = KnownBridges.getAll();
 
@@ -313,10 +319,12 @@ public class MainActivity extends AppCompatActivity implements bridgesFragment.O
                         case LIGHTS_AND_GROUPS:
                             //showToast("Light or Group updated!");
                             lightFrag.findLights();
+                            if(groupsInit)
+                                groupFrag.updateLightsFromHearbeat();
                             break;
                         case FULL_CONFIG:
                             // Give the lightFragment the updated bridge.
-                            lightFrag.findLights();
+                            //lightFrag.findLights();
                             break;
                         default:
                             break;
@@ -344,22 +352,28 @@ public class MainActivity extends AppCompatActivity implements bridgesFragment.O
 
     }
 
+    // Method to get the bridge object
     public Bridge getBridge() {
         return bridge;
     }
 
+    // Method to set the bridge as connected and start the heartbeat update process
     public void setConnected() {
         connected = bridge.getBridgeConnection(BridgeConnectionType.LOCAL);
         startHeartbeat();
     }
+
+    // Method to start the heartbeat update process. Refreshes the local information with information from the bridge cache
+    // Amount of time is set by the interval argument
     private void startHeartbeat() {
         heartbeatManager = connected.getHeartbeatManager();
-        heartbeatManager.startHeartbeat(BridgeStateCacheType.LIGHTS_AND_GROUPS, 10000);
+        heartbeatManager.startHeartbeat(BridgeStateCacheType.LIGHTS_AND_GROUPS, 5000);
     }
 
     // Called when refreshing the lights and groups fragments
     public void HeartBeatPulse() {
-        heartbeatManager.performOneHeartbeat(BridgeStateCacheType.LIGHTS_AND_GROUPS);
+        if(bridge.isConnected())
+            heartbeatManager.performOneHeartbeat(BridgeStateCacheType.LIGHTS_AND_GROUPS);
     }
 
     // Light Adapter will call this method which will then call method in LightsFragment
@@ -367,6 +381,7 @@ public class MainActivity extends AppCompatActivity implements bridgesFragment.O
         lightFrag.updateLightState(light, allLights);
     }
 
+    // Method to update group lights.
     public void updateGroupLights(LightPoint light, boolean allLights) {
         groupFrag.updateLightState(light, allLights);
     }
@@ -376,4 +391,7 @@ public class MainActivity extends AppCompatActivity implements bridgesFragment.O
         groupFrag.showGroupLightsDialog(group);
     }
 
+    public void setGroupInit(boolean flag) {
+        groupsInit = flag;
+    }
 }

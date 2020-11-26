@@ -1,5 +1,8 @@
 package com.example.user.finalhcproject;
 
+// ENUMS for the connection evenet codes that can be returned.
+// These codes are provided by the Philips Hue SDK
+
 public enum ConnectionEvent {
     NO_VALUE(-1),
     NONE(0),

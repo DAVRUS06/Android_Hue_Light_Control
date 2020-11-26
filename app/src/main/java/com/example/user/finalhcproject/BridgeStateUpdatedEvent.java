@@ -1,5 +1,9 @@
 package com.example.user.finalhcproject;
 
+
+// ENUMS for the bridge states
+// These are codes provided by the Philips Hue SDK
+
 public enum BridgeStateUpdatedEvent {
     UNKNOWN(-1),
     INITIALIZED(0),
