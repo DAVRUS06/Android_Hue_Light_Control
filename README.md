@@ -1,7 +1,6 @@
 # Android Hue Light Control
 
 This Android Hue Light Control project was created to control devices in a Philips Hue Light system. The app connects to the Hue system through the bridge and controls the devices that are part of the system. The app supports bridge discovery, light discovery, group discovery and management of lights/groups. 
-
 <br></br>
 # Bridge View
 
