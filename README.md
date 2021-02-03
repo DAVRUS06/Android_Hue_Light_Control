@@ -51,13 +51,13 @@ Checking the box will include the light with the group and unchecking the box wi
 <br></br>
 ##### Figure 7: Groups View
 ![Groups View](images/groupList.PNG)
-The three buttons on the bottom right of figure 7 are for adding/removing a group from the system and updating the group list. When the refresh button is tapped the class will look for any new group data from the bridge cache. Tapping the + icon will bring up the bridge creation controls as shown in figure 8. The user chooses a name for the group and which lights should be associated with the new group. 
+The three buttons on the bottom right of figure 7 are for adding/removing a group from the system and updating the group list. When the refresh button is tapped the class will look for any new group data from the bridge cache. Tapping the "+" icon will bring up the bridge creation controls as shown in figure 8. The user chooses a name for the group and which lights should be associated with the new group. 
 
 <br></br>
 ##### Figure 8: Groups Add Group
 ![Groups Add Group](images/groupCreateGroup.PNG)
 
-Tapping the - icon will bring up the control for removing a group as shown in figure 9. All groups will be shown and checking the box next to a group name will remove it from the system. 
+Tapping the "-" icon will bring up the control for removing a group as shown in figure 9. All groups will be shown and checking the box next to a group name will remove it from the system. 
 <br></br>
 ##### Figure 9: Groups Remove Group
 ![Groups Remove Group](images/groupRemoveGroup.PNG)
